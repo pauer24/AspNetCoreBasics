@@ -25,28 +25,29 @@ namespace AspNetCoreBasics.HttpClientFactory
                     services.Configure<ApiConfiguration>(builder.Configuration);
 
                     services.AddTransient<NytMostPopularService>();
+                    // THE HTTP MESSAGE HANDLERS MUST BE REGISTERED AS WELL
                     services.AddTransient<AddApiKeyQueryParameter>();
 
+                    // REGISTERING CLIENT BY NAME
                     services.AddNytBooksApi();
+                    // REGISTERING CLIENT FOR SERVICE
                     services.AddNytMostPopularServiceClient();
                 })
                 .Configure(app => { })
                 .Build();
 
-
-
+            // GETTING THE FACTORY
             var factory = webHost.Services.GetService<IHttpClientFactory>();
-
+            // REQUESTING THE CLIENT MANUALLY
             var booksClient = factory.CreateClient("nytBooks");
             var response = await booksClient.GetAsync("lists.json?list=e-book-fiction");
             var result = await response.Content.ReadAsStringAsync();
 
+            // THE CLIENT WILL BE PROVIDED AUTOMAGICALLY
             var service = webHost.Services.GetService<NytMostPopularService>();
             var articleTitles = await service.GetTechArticleTitles(2);
         }        
     }
-
-    public class NytMostPopularApiClient { }
 
     public class AddApiKeyQueryParameter : DelegatingHandler
     {

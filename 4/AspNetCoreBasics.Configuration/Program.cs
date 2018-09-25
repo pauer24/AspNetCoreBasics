@@ -19,15 +19,18 @@ namespace NetCoreBasics.Configuration
 
             var configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddUserSecrets<Program>()
+                .AddUserSecrets<Program>()  // path: C:\Users\{current_user}\AppData\Roaming\Microsoft\UserSecrets\{csproj_UserSecretsId}
                 .Build();
 
+
+            // HARD READING CONFIG
             Console.WriteLine($"Configuration RootSetting= {configuration["RootSetting"]}");
             Console.WriteLine($"Configuration rootsetting= {configuration["rootsetting"]}");
 
             Console.WriteLine($"Configuration WorldSettings section= {configuration["worldsettings"]}");
             Console.WriteLine($"Configuration WorldSettings:Temperature:Min:Location section= {configuration["WorldSettings:Temperature:Min:Location"]}");
 
+            // MAPPING CONFIG TO CLASS
             Console.WriteLine($"Configuration WorldSettings binded section = {configuration.GetSection("WorldSettings").Get<WorldSettings>()}");
 
             Console.WriteLine($"Configuration Secret = {configuration["OpenSecrets:0"]}");
@@ -42,6 +45,7 @@ namespace NetCoreBasics.Configuration
                 .Configure(ConfigureApplication)
                 .Build();
 
+            // RETRIVING CONFIG FROM IOPTIONS
             var wSettings = host.Services.GetService<IOptions<WorldSettings>>();
 
             host.Run();
@@ -53,6 +57,8 @@ namespace NetCoreBasics.Configuration
             appBuilder.Run(async context =>
             {
                 var message = string.Empty;
+
+                // ON EVERY REQUEST IF THE CONFIGURATION CHANGED, THE VALUE WILL CHANGE
                 //var options = context.RequestServices.GetService<IOptions<WorldSettings>>().Value;
                 var options = context.RequestServices.GetService<IOptionsSnapshot<WorldSettings>>().Value;
                 message += $"Options = {options}";

@@ -12,7 +12,7 @@ namespace AspNetCorebasics.WebApp
     public class Program
     {
         
-        public static void Main(string[] args)
+        public static void Main2(string[] args)
         {
             CreateDefaultWebHostBuilder(args).Build().Run();
         }
@@ -23,7 +23,7 @@ namespace AspNetCorebasics.WebApp
         
 
 
-        public static void Main2(string[] args)
+        public static void Main(string[] args)
         {
             WebHost
                 .CreateDefaultBuilder()
@@ -36,7 +36,7 @@ namespace AspNetCorebasics.WebApp
                     app.Use(async (context, next) =>
                     {
                         var logger = context.RequestServices.GetService<ILogger<Program>>();
-                        logger.LogWarning("This is customized");
+                        logger.LogWarning("This is without Startup");
                         await next();
                     });
 
